@@ -1,0 +1,16 @@
+{
+  // Strict type checking
+  "typeCheckingMode": "strict",
+
+  // Folders to exclude from type checking
+  "exclude": ["**/tests", "**/.venv", "**/__pycache__"],
+
+  // Report issues for optional member access
+  "reportOptionalMemberAccess": true,
+
+  // Report missing imports
+  "reportMissingImports": true,
+
+  // Ignore private usage warnings
+  "reportPrivateUsage": false
+}

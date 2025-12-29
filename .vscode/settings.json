@@ -1,0 +1,14 @@
+{
+  // Python interpreter to use
+  "python.pythonPath": ".venv/bin/python3.12",
+
+  // Enable Pylance as the language server
+  "python.languageServer": "Pylance",
+
+  // Exclude folders like virtual environments or build artifacts
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.venv": true,
+    "**/.pytest_cache": true
+  }
+}

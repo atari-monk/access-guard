@@ -22,6 +22,13 @@ class PermissionService:
 
     @staticmethod
     def check_user_permission(
-        db: Session, username: str, resource: str, action: str
+        db: Session,
+        user: models.User,
+        resource: str,
+        action: str,
     ) -> bool:
-        return crud.check_permission(db, username, resource, action)
+        for role in user.roles:
+            for perm in role.permissions:
+                if perm.resource == resource and perm.action == action:
+                    return True
+        return False

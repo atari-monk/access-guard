@@ -4,10 +4,17 @@ from . import schemas
 from .database import engine, Base, get_db
 from app.services.auth_service import AuthService
 from app.services.permission_service import PermissionService
+from app.core.security import get_current_user
+from app import models
 
+# Tworzymy wszystkie tabele
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="AccessGuard MVP")
+app = FastAPI(title="AccessGuard MVP3")
+
+# -----------------------
+# Auth endpoints
+# -----------------------
 
 @app.post("/auth/register", response_model=schemas.UserOut)
 def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -17,6 +24,7 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(400, str(e))
 
+
 @app.post("/auth/login", response_model=schemas.Token)
 def login(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     try:
@@ -25,12 +33,20 @@ def login(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, str(e))
 
+
+# -----------------------
+# Roles & permissions endpoints
+# -----------------------
+
 @app.post("/roles/assign")
-def assign_role(payload: schemas.RoleAssign, db: Session = Depends(get_db)):
+def assign_role(
+    payload: schemas.RoleAssign,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     try:
-        user = PermissionService.assign_role(
-            db, payload.username, payload.role
-        )
+        # teraz przekazujemy username z payload tylko do service (testowo)
+        user = PermissionService.assign_role(db, payload.username, payload.role)
         return {
             "username": user.username,
             "roles": [r.name for r in user.roles],
@@ -38,27 +54,39 @@ def assign_role(payload: schemas.RoleAssign, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(404, str(e))
 
+
 @app.post("/permissions/create")
 def create_permission(
     resource: str,
     action: str,
     role_name: str,
+    current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    role, perm = PermissionService.create_permission_for_role(
-        db, resource, action, role_name
-    )
+    role, perm = PermissionService.create_permission_for_role(db, resource, action, role_name)
     return {
         "role": role.name,
         "permission": {"resource": perm.resource, "action": perm.action},
     }
 
+
 @app.post("/permissions/check")
 def check_permission(
     payload: schemas.PermissionCheck,
+    current_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     allowed = PermissionService.check_user_permission(
-        db, payload.username, payload.resource, payload.action
+        db,
+        current_user,  # <- teraz przekazujemy całego Usera, nie string
+        payload.resource,
+        payload.action,
     )
-    return {"allowed": allowed}
+
+    if not allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission denied",
+        )
+
+    return {"allowed": True}

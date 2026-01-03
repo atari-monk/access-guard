@@ -14,7 +14,6 @@ class RoleAssign(BaseModel):
     role: str
 
 class PermissionCheck(BaseModel):
-    username: str
     resource: str
     action: str
 

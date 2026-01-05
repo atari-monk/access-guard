@@ -9,6 +9,11 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
+class PermissionCreate(BaseModel):
+    resource: str
+    action: str
+    role_name: str
+    
 class RoleAssign(BaseModel):
     username: str
     role: str

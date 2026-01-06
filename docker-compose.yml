@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: access-guard-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://accessguard:accessguard@db:5432/accessguard
+      SECRET_KEY: super-secret-change-me
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: access-guard-db
+    environment:
+      POSTGRES_USER: accessguard
+      POSTGRES_PASSWORD: accessguard
+      POSTGRES_DB: accessguard
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

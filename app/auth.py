@@ -2,10 +2,11 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 from jose import jwt, JWTError
+import os
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
-SECRET_KEY: str = "CHANGE_THIS_SECRET_TO_SOMETHING_STRONG"
+SECRET_KEY: str = os.getenv("SECRET_KEY", "INSECURE-DEV-KEY")
 ALGORITHM: str = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 

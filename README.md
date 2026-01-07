@@ -133,3 +133,7 @@ access-guard/
 ![Swagger UI demo](docs/screenshots/swagger.png)
 
 ---
+
+## Linki
+
+- [Dokumentacja redoc](https://access-guard.onrender.com/redoc)

@@ -8,6 +8,8 @@ from app import schemas, models
 from app.core.tags import TAGS_METADATA
 from app.services.auth_service import AuthService
 from app.services.permission_service import PermissionService
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -17,12 +19,37 @@ app = FastAPI(
     title="AccessGuard",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc",
+    redoc_url=None,
     openapi_tags=TAGS_METADATA,
 )
 
 # Setup custom OpenAPI for Swagger JWT
 setup_openapi(app)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# -----------------------
+# Redoc endpoint
+# -----------------------
+
+@app.get("/redoc", include_in_schema=False)
+def redoc():
+    return HTMLResponse("""
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AccessGuard API – Redoc</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body { margin: 0; padding: 0; }
+    </style>
+  </head>
+  <body>
+    <redoc spec-url="/openapi.json"></redoc>
+    <script src="/static/redoc.standalone.js"></script>
+  </body>
+</html>
+""")
 
 # -----------------------
 # Authentication endpoints

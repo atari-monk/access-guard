@@ -45,10 +45,59 @@ Projekt jest **produkcyjnie przygotowany**, a jego demo działa w Render.com.
 
 ## Demo online
 
-- Swagger UI: [https://access-guard.onrender.com/docs](https://access-guard.onrender.com/docs)  
-- Redoc: [https://access-guard.onrender.com/redoc](https://access-guard.onrender.com/redoc)  
+- [Swagger UI](https://access-guard.onrender.com/docs)  
+- [Redoc](https://access-guard.onrender.com/redoc)  
+- [Blog developerski](https://atari-monk.github.io/dev-blog/post/access-guard/)
 
-> Testowe użytkownicy można stworzyć i zalogować się, aby sprawdzić role i permissions.
+> Można stworzyć testowych użytkowników i zalogować się, aby sprawdzić role i permissions.
+
+- POST/auth/register
+
+```json
+{
+  "username": "alice",
+  "password": "secret"
+}
+```
+
+- POST/auth/login
+
+```json
+{
+  "username": "alice",
+  "password": "secret"
+}
+```
+
+skopiuj token w odpowiedzi i wklej do przycisku Authorize (UWAGA! jest config bez wpisywania Bearer)  
+
+- POST/permissions/create
+
+```json
+{
+  "resource": "door1",
+  "action": "open",
+  "role_name": "guard"
+}
+```
+
+- POST/roles/assign
+
+```json
+{
+  "username": "alice",
+  "role": "guard"
+}
+```
+
+- POST/permissions/check
+
+```json
+{
+  "resource": "door1",
+  "action": "open"
+}
+```
 
 ---
 
@@ -139,7 +188,3 @@ access-guard/
 ![Swagger UI demo](docs/screenshots/swagger.png)
 
 ---
-
-## Linki
-
-- [Dokumentacja redoc](https://access-guard.onrender.com/redoc)

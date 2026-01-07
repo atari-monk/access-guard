@@ -67,6 +67,12 @@ cd access-guard
 docker compose up --build
 ```
 
+albo
+
+```bash
+uvicorn app.main:app --reload
+```
+
 3. Otwórz Swagger:
 
 ```

@@ -34,7 +34,7 @@ async def test_full_flow():
         # 3️⃣ Tworzenie uprawnienia dla roli
         r = await ac.post(
             "/permissions/create",
-            params={"resource": "door1", "action": "access", "role_name": "guard"},
+            json={"resource": "door1", "action": "access", "role_name": "guard"},
             headers=headers
         )
         assert r.status_code == 200
